@@ -80,21 +80,35 @@ h1{font-size:clamp(1.55rem,5vw,2.2rem);line-height:1.15;margin:8px 0}.sub{color:
 <div class="row" style="justify-content:center"><button class="btn secondary" id="sentencePrev">← Câu trước</button><button class="btn green" id="sentenceNext">Câu tiếp theo →</button></div>
 </section>
 </main>
-<div class="footer">🌟 Học cùng người lớn sẽ vui và hiệu quả hơn. Giọng đọc phụ thuộc thiết bị.</div>
+<div class="footer">🌟 Học cùng người lớn sẽ vui và hiệu quả hơn. Game chỉ dùng giọng tiếng Việt có trên thiết bị; ưu tiên giọng nữ nếu có.</div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
 let stars=0;
 function addStar(){stars++;$('stars').textContent=stars}
 function speak(text){
- if(!('speechSynthesis' in window)){alert('Thiết bị này chưa hỗ trợ đọc tự động.');return}
+ if(!('speechSynthesis' in window)){
+   alert('Thiết bị này chưa hỗ trợ đọc tự động.'); return;
+ }
  speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);u.lang='vi-VN';u.rate=.78;u.pitch=1.12;
  const voices=speechSynthesis.getVoices();
- const vi=voices.filter(v=>v.lang.toLowerCase().startsWith('vi'));
- // Ưu tiên giọng nữ nếu tên giọng có dấu hiệu nữ; tên giọng trên từng máy không thống nhất.
- const female=vi.find(v=>/female|woman|nu|nữ|hoai|linh|mai|an/i.test(v.name));
- u.voice=female||vi[0]||null;speechSynthesis.speak(u);
+ // Chỉ chọn giọng có ngôn ngữ tiếng Việt. Không dùng giọng mặc định,
+ // vì trình duyệt có thể đọc tiếng Việt bằng giọng tiếng Anh.
+ const vi=voices.filter(v => (v.lang || '').toLowerCase().startsWith('vi'));
+ if(!vi.length){
+   alert('Thiết bị chưa có giọng đọc tiếng Việt. Hãy cài thêm giọng Tiếng Việt trong cài đặt hệ điều hành/trình duyệt, sau đó tải lại trang. Game sẽ không chuyển sang đọc tiếng Anh nữa.');
+   return;
+ }
+ // Ưu tiên giọng có tên thường gặp của giọng nữ; hệ thống không cung cấp
+ // thông tin giới tính chuẩn nên nếu không nhận diện được sẽ dùng giọng Việt đầu tiên.
+ const female=vi.find(v => /female|woman|girl|nữ|nu[-_ ]|hoai|linh|mai|huyen|thao|trang/i.test(v.name));
+ const chosen=female || vi[0];
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang=chosen.lang || 'vi-VN';
+ u.voice=chosen;
+ u.rate=.78;
+ u.pitch=1.15;
+ speechSynthesis.speak(u);
 }
 const alphabet=[
 ['A','a','áo 👕'],['Ă','ă','ăn 🍎'],['Â','â','ấm 🫖'],['B','b','bé 👧'],['C','c','cá 🐟'],['D','d','dê 🐐'],['Đ','đ','đèn 💡'],
