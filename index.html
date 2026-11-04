@@ -43,7 +43,7 @@ h1{font-size:clamp(1.55rem,5vw,2.2rem);line-height:1.15;margin:8px 0}.sub{color:
 </head>
 <body>
 <div class="app">
-<header><div class="brand"><div class="logo">🐣</div><span>Bé vui học tiếng Việt</span></div><div class="score">⭐ <span id="stars">0</span></div></header>
+<header><div class="brand"><div class="logo">🐣</div><span>Bé vui học tiếng Việt</span></div><div class="row" style="justify-content:flex-end"><button class="btn secondary" id="voiceDemo" style="padding:9px 11px;min-height:40px">🎧 Nghe thử giọng cô</button><div class="score">⭐ <span id="stars">0</span></div></div></header>
 <h1>Chơi vui – đọc giỏi! 🌈</h1><p class="sub">Mỗi ngày một chút, bé học chữ và tập đánh vần nhé.</p>
 <nav class="tabs" aria-label="Khu vực học">
 <button class="tab active" data-page="letters"><span class="emoji">🔤</span>Chữ cái</button>
@@ -80,36 +80,26 @@ h1{font-size:clamp(1.55rem,5vw,2.2rem);line-height:1.15;margin:8px 0}.sub{color:
 <div class="row" style="justify-content:center"><button class="btn secondary" id="sentencePrev">← Câu trước</button><button class="btn green" id="sentenceNext">Câu tiếp theo →</button></div>
 </section>
 </main>
-<div class="footer">🌟 Học cùng người lớn sẽ vui và hiệu quả hơn. Game chỉ dùng giọng tiếng Việt có trên thiết bị; ưu tiên giọng nữ nếu có.</div>
+<div id="audioNotice" class="feedback" aria-live="polite"></div><div class="footer">🌟 Học cùng người lớn sẽ vui và hiệu quả hơn. Game sử dụng bản ghi MP3 giọng nữ HoaiMy.</div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
 let stars=0;
 function addStar(){stars++;$('stars').textContent=stars}
-function speak(text){
- if(!('speechSynthesis' in window)){
-   alert('Thiết bị này chưa hỗ trợ đọc tự động.'); return;
- }
- speechSynthesis.cancel();
- const voices=speechSynthesis.getVoices();
- // Chỉ chọn giọng có ngôn ngữ tiếng Việt. Không dùng giọng mặc định,
- // vì trình duyệt có thể đọc tiếng Việt bằng giọng tiếng Anh.
- const vi=voices.filter(v => (v.lang || '').toLowerCase().startsWith('vi'));
- if(!vi.length){
-   alert('Thiết bị chưa có giọng đọc tiếng Việt. Hãy cài thêm giọng Tiếng Việt trong cài đặt hệ điều hành/trình duyệt, sau đó tải lại trang. Game sẽ không chuyển sang đọc tiếng Anh nữa.');
-   return;
- }
- // Ưu tiên giọng có tên thường gặp của giọng nữ; hệ thống không cung cấp
- // thông tin giới tính chuẩn nên nếu không nhận diện được sẽ dùng giọng Việt đầu tiên.
- const female=vi.find(v => /female|woman|girl|nữ|nu[-_ ]|hoai|linh|mai|huyen|thao|trang/i.test(v.name));
- const chosen=female || vi[0];
- const u=new SpeechSynthesisUtterance(text);
- u.lang=chosen.lang || 'vi-VN';
- u.voice=chosen;
- u.rate=.78;
- u.pitch=1.15;
- speechSynthesis.speak(u);
+// Phát MP3 giọng nữ HoaiMy trong thư mục audio/.
+// Khi chưa có đủ MP3, game sẽ báo tên file còn thiếu thay vì đọc bằng giọng tiếng Anh.
+let currentAudio=null;
+function playClip(file){
+ if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;}
+ const audio=new Audio('audio/'+file+'.mp3');
+ currentAudio=audio;
+ audio.onerror=()=>{$('audioNotice').textContent='Chưa tìm thấy audio/'+file+'.mp3. Hãy bổ sung file MP3 này vào thư mục audio trên GitHub.';};
+ audio.onplay=()=>{$('audioNotice').textContent='';};
+ audio.play().catch(()=>{$('audioNotice').textContent='Chưa phát được âm thanh. Hãy chạm lại nút nghe hoặc kiểm tra file MP3.';});
 }
+const letterAudioFiles=['letter-a','letter-aw','letter-aa','letter-b','letter-c','letter-d','letter-dd','letter-e','letter-ee','letter-g','letter-h','letter-i','letter-k','letter-l','letter-m','letter-n','letter-o','letter-oo','letter-ow','letter-p','letter-q','letter-r','letter-s','letter-t','letter-u','letter-uw','letter-v','letter-x','letter-y'];
+function playLetter(i){playClip(letterAudioFiles[i]);}
+$('voiceDemo').onclick=()=>playClip('demo-hoaimy');
 const alphabet=[
 ['A','a','áo 👕'],['Ă','ă','ăn 🍎'],['Â','â','ấm 🫖'],['B','b','bé 👧'],['C','c','cá 🐟'],['D','d','dê 🐐'],['Đ','đ','đèn 💡'],
 ['E','e','em 👶'],['Ê','ê','ếch 🐸'],['G','g','gà 🐔'],['H','h','hoa 🌸'],['I','i','im 🤫'],['K','k','kẹo 🍬'],['L','l','lá 🍃'],
@@ -118,8 +108,8 @@ const alphabet=[
 ];
 let currentLetter=0;
 function showLetter(i){currentLetter=i;const a=alphabet[i];$('letterBig').textContent=a[0];$('letterExample').textContent=a[2];$('letterProgress').style.width=((i+1)/alphabet.length*100)+'%';document.querySelectorAll('.letter-card').forEach((b,j)=>b.classList.toggle('selected',i===j))}
-alphabet.forEach((a,i)=>{const b=document.createElement('button');b.className='letter-card';b.innerHTML=a[0]+'<small>'+a[1]+'</small>';b.onclick=()=>{showLetter(i);speak(a[0])};$('letterGrid').append(b)});
-$('speakLetter').onclick=()=>speak(alphabet[currentLetter][0]+' . Ví dụ '+alphabet[currentLetter][2].split(' ')[0]);
+alphabet.forEach((a,i)=>{const b=document.createElement('button');b.className='letter-card';b.innerHTML=a[0]+'<small>'+a[1]+'</small>';b.onclick=()=>{showLetter(i);playLetter(i)};$('letterGrid').append(b)});
+$('speakLetter').onclick=()=>playLetter(currentLetter);
 showLetter(0);
 
 const spellings=[
@@ -134,22 +124,22 @@ const spellings=[
 ];
 let si=0,selected=[];
 function renderSpell(){const s=spellings[si];selected=[];$('spellPic').textContent=s.pic;$('spellTarget').textContent=s.word;$('spellAnswer').textContent='Chạm các thẻ bên dưới để ghép';$('spellFeedback').textContent='';$('spellParts').innerHTML=s.parts.map(p=>'<span class="chip">'+p+'</span>').join('');$('spellChoices').innerHTML='';s.choices.forEach((c,i)=>{const b=document.createElement('button');b.className='letter-card';b.textContent=c;b.onclick=()=>{if(selected.length<3){selected.push(c);$('spellAnswer').textContent=selected.join(' + ');b.disabled=true}};$('spellChoices').append(b)})}
-$('hearTarget').onclick=()=>speak(spellings[si].word);$('resetSpell').onclick=renderSpell;
-$('checkSpell').onclick=()=>{const s=spellings[si];if(selected.length===3&&selected.join('|')===s.parts.join('|')){$('spellFeedback').textContent='Giỏi quá! Bé ghép đúng rồi ⭐';addStar();speak('Giỏi quá! '+s.word)}else{$('spellFeedback').textContent='Mình thử lại nhé! Nghe tiếng mẫu và chọn theo thứ tự.'}};
+$('hearTarget').onclick=()=>playClip(['spell-be','spell-ba','spell-ba-huyen','spell-ca','spell-me','spell-bo','spell-la','spell-na'][si]);$('resetSpell').onclick=renderSpell;
+$('checkSpell').onclick=()=>{const s=spellings[si];if(selected.length===3&&selected.join('|')===s.parts.join('|')){$('spellFeedback').textContent='Giỏi quá! Bé ghép đúng rồi ⭐';addStar();playClip('feedback-good')}else{$('spellFeedback').textContent='Mình thử lại nhé! Nghe tiếng mẫu và chọn theo thứ tự.'}};
 $('nextSpell').onclick=()=>{si=(si+1)%spellings.length;renderSpell()};renderSpell();
 
 const words=[['🍎','táo'],['🐟','cá'],['🐱','mèo'],['🐶','chó'],['🌸','hoa'],['🏠','nhà'],['🚗','xe'],['🐘','voi'],['☀️','nắng'],['⭐','sao'],['🍌','chuối'],['🐸','ếch']];
-words.forEach(([pic,w])=>{const d=document.createElement('button');d.className='word-item';d.innerHTML='<span class="pic">'+pic+'</span><strong>'+w+'</strong><small>🔊 Chạm để nghe</small>';d.onclick=()=>speak(w);$('wordList').append(d)});
+words.forEach(([pic,w])=>{const d=document.createElement('button');d.className='word-item';d.innerHTML='<span class="pic">'+pic+'</span><strong>'+w+'</strong><small>🔊 Chạm để nghe</small>';d.onclick=()=>playClip('word-'+w.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'d'));$('wordList').append(d)});
 
 let qi=0;const quizQs=[['A',['A','B','C']],['B',['D','B','M']],['M',['N','H','M']],['O',['O','Ô','Ơ']],['Đ',['D','Đ','B']],['E',['Ê','E','A']],['X',['S','X','T']]];
-function renderQuiz(){const q=quizQs[qi];$('quizFeedback').textContent='';$('quizChoices').innerHTML='';q[1].forEach(c=>{const b=document.createElement('button');b.className='letter-card';b.textContent=c;b.onclick=()=>{if(c===q[0]){$('quizFeedback').textContent='Chính xác! Bé giỏi lắm! ⭐';b.classList.add('correct');addStar();speak('Chính xác!')}else{$('quizFeedback').textContent='Chưa đúng rồi, bé nghe lại nhé.';b.classList.add('wrong')}};$('quizChoices').append(b)})}
-$('quizHear').onclick=()=>speak('Hãy tìm chữ '+quizQs[qi][0]);$('quizNext').onclick=()=>{qi=(qi+1)%quizQs.length;renderQuiz()};renderQuiz();
+function renderQuiz(){const q=quizQs[qi];$('quizFeedback').textContent='';$('quizChoices').innerHTML='';q[1].forEach(c=>{const b=document.createElement('button');b.className='letter-card';b.textContent=c;b.onclick=()=>{if(c===q[0]){$('quizFeedback').textContent='Chính xác! Bé giỏi lắm! ⭐';b.classList.add('correct');addStar();playClip('feedback-good')}else{$('quizFeedback').textContent='Chưa đúng rồi, bé nghe lại nhé.';b.classList.add('wrong')}};$('quizChoices').append(b)})}
+$('quizHear').onclick=()=>playLetter(alphabet.findIndex(a=>a[0]===quizQs[qi][0]));$('quizNext').onclick=()=>{qi=(qi+1)%quizQs.length;renderQuiz()};renderQuiz();
 
 const sentences=[['🐱','Con mèo nằm ngủ.'],['👧','Bé yêu mẹ.'],['☀️','Ông mặt trời tỏa nắng.'],['🐟','Cá bơi dưới nước.'],['🐶','Chú chó chạy nhanh.'],['🌼','Bông hoa rất đẹp.']];
 let ci=0;function renderSentence(){$('sentencePic').textContent=sentences[ci][0];$('sentenceText').textContent=sentences[ci][1]}
-$('sentenceHear').onclick=()=>speak(sentences[ci][1]);$('sentenceNext').onclick=()=>{ci=(ci+1)%sentences.length;renderSentence()};$('sentencePrev').onclick=()=>{ci=(ci+sentences.length-1)%sentences.length;renderSentence()};renderSentence();
+$('sentenceHear').onclick=()=>playClip('sentence-'+(ci+1));$('sentenceNext').onclick=()=>{ci=(ci+1)%sentences.length;renderSentence()};$('sentencePrev').onclick=()=>{ci=(ci+sentences.length-1)%sentences.length;renderSentence()};renderSentence();
 
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(t.dataset.page).classList.remove('hidden');speechSynthesis?.cancel?.()});
-if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=()=>{}}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(t.dataset.page).classList.remove('hidden');if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;}});
+
 </script>
 </body></html>
