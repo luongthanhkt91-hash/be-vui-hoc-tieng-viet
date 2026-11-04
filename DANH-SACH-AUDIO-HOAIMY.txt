@@ -1,0 +1,78 @@
+DANH SÁCH MP3 CẦN TẠO BẰNG GIỌNG HOAiMY
+
+CÁCH DÙNG
+1. Mở https://speechma.com/vietnamese-text-to-speech
+2. Chọn Vietnamese và giọng HoaiMy (Female).
+3. Tạo từng câu trong danh sách, tải MP3 về máy.
+4. Đổi tên file chính xác như bên dưới (không dấu, viết thường).
+5. Đưa các file MP3 vào thư mục audio/ của trò chơi.
+
+Đã có sẵn: audio/demo-hoaimy.mp3 (file mẫu bạn gửi, dùng cho nút “Nghe thử giọng cô”).
+
+NHÓM 1 – CHỮ CÁI (29 file)
+letter-a.mp3 — A. A trong từ áo. Áo.
+letter-aw.mp3 — Ă. Ă trong từ ăn. Ăn.
+letter-aa.mp3 — Â. Â trong từ ấm. Ấm.
+letter-b.mp3 — B. B trong từ bé. Bé.
+letter-c.mp3 — C. C trong từ cá. Cá.
+letter-d.mp3 — D. D trong từ dê. Dê.
+letter-dd.mp3 — Đ. Đ trong từ đèn. Đèn.
+letter-e.mp3 — E. E trong từ em. Em.
+letter-ee.mp3 — Ê. Ê trong từ ếch. Ếch.
+letter-g.mp3 — G. G trong từ gà. Gà.
+letter-h.mp3 — H. H trong từ hoa. Hoa.
+letter-i.mp3 — I. I trong từ im. Im.
+letter-k.mp3 — K. K trong từ kẹo. Kẹo.
+letter-l.mp3 — L. L trong từ lá. Lá.
+letter-m.mp3 — M. M trong từ mẹ. Mẹ.
+letter-n.mp3 — N. N trong từ nai. Nai.
+letter-o.mp3 — O. O trong từ ong. Ong.
+letter-oo.mp3 — Ô. Ô trong từ ô tô. Ô tô.
+letter-ow.mp3 — Ơ. Ơ trong từ ớt. Ớt.
+letter-p.mp3 — P. P trong từ pin. Pin.
+letter-q.mp3 — Q. Q trong từ quà. Quà.
+letter-r.mp3 — R. R trong từ rá. Rá.
+letter-s.mp3 — S. S trong từ sao. Sao.
+letter-t.mp3 — T. T trong từ tay. Tay.
+letter-u.mp3 — U. U trong từ ủn ỉn. Ủn ỉn.
+letter-uw.mp3 — Ư. Ư trong từ sư tử. Sư tử.
+letter-v.mp3 — V. V trong từ voi. Voi.
+letter-x.mp3 — X. X trong từ xe. Xe.
+letter-y.mp3 — Y. Y trong từ y tá. Y tá.
+
+NHÓM 2 – ĐÁNH VẦN (8 file)
+spell-be.mp3 — Bé.
+spell-ba.mp3 — Ba.
+spell-ba-huyen.mp3 — Bà.
+spell-ca.mp3 — Cá.
+spell-me.mp3 — Mẹ.
+spell-bo.mp3 — Bò.
+spell-la.mp3 — Lá.
+spell-na.mp3 — Na.
+
+NHÓM 3 – TỪ VỰNG (12 file)
+word-tao.mp3 — Táo.
+word-ca.mp3 — Cá.
+word-meo.mp3 — Mèo.
+word-cho.mp3 — Chó.
+word-hoa.mp3 — Hoa.
+word-nha.mp3 — Nhà.
+word-xe.mp3 — Xe.
+word-voi.mp3 — Voi.
+word-nang.mp3 — Nắng.
+word-sao.mp3 — Sao.
+word-chuoi.mp3 — Chuối.
+word-ech.mp3 — Ếch.
+
+NHÓM 4 – CÂU NGẮN (6 file)
+sentence-1.mp3 — Con mèo nằm ngủ.
+sentence-2.mp3 — Bé yêu mẹ.
+sentence-3.mp3 — Ông mặt trời tỏa nắng.
+sentence-4.mp3 — Cá bơi dưới nước.
+sentence-5.mp3 — Chú chó chạy nhanh.
+sentence-6.mp3 — Bông hoa rất đẹp.
+
+NHÓM 5 – KHEN BÉ (1 file)
+feedback-good.mp3 — Giỏi quá! Bé làm đúng rồi!
+
+TỔNG CỘNG: 56 file nội dung cần tạo. Cộng với file demo-hoaimy.mp3 đã có sẵn là 57 file trong thư mục audio/.
